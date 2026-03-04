@@ -105,3 +105,34 @@ def BGEU : RVXInstB<0b1100011, 0b111, outs, ins, "bgeu", [branch], IIC_Any>;
 
 def JAL  : RVXInstJ<0b1101111, outs, ins, "jal", [jump], IIC_Any>;
 def JALR : RVXInstI<0b1100111, 0b000, outs, ins, "jalr", [jump], IIC_Any>;
+
+def fencearg : Operand<XLenVT> {
+    let PrintMethod      = "printFenceArg";   
+    let ParserMatchClass = "FenceArg";           
+    let EncoderMethod    = "getFenceArgOpValue"; 
+    let DecoderMethod    = "decodeFenceArg";     
+    let ParserMethod     = "parseFenceArg";   
+}
+
+def uimm8_fence : Operand<XLenVT>, ImmLeaf<XLenVT, [{ return isUInt<8>(Imm); }]> {
+    let EncoderMethod = "getImmOpValue";
+    let DecoderMethod = "decodeUImmOperand<8>";
+}
+
+def uimm12_fence : Operand<XLenVT>,
+    ImmLeaf<XLenVT, [{return isUInt<12>(Imm);}]> {
+  let EncoderMethod = "getImmOpValue";
+  let DecoderMethod = "decodeUImmOperand<12>";
+}
+
+def FENCE : RVXInstI<0b0001111, 0b000,                  
+                (outs),ins uimm12_fence:$fm),  
+                "fence\t$fm", [], NoItin> {
+  let rd  = 0;
+  let rs1 = 0;
+  let hasSideEffects = 1;
+  let isBarrier      = 1;
+  let mayLoad        = 1;
+  let mayStore       = 1;
+}
+
