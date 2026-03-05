@@ -1,5 +1,5 @@
-#include "RVXInstrFormats.td"
-#include "RVXRegisterInfo.td"
+include "RVXInstrFormats.td"
+include "RVXRegisterInfo.td"
 
 def simm12 : Operand<XLenVT>, ImmLeaf<XLenVT, [{return isInt<12>(Imm);}]>{
     let DecoderMethod = "decodeImmOperand<12>"; 
@@ -125,14 +125,13 @@ def uimm12_fence : Operand<XLenVT>,
   let DecoderMethod = "decodeUImmOperand<12>";
 }
 
-def FENCE : RVXInstI<0b0001111, 0b000,                  
-                (outs),ins uimm12_fence:$fm),  
-                "fence\t$fm", [], NoItin> {
-  let rd  = 0;
-  let rs1 = 0;
-  let hasSideEffects = 1;
-  let isBarrier      = 1;
-  let mayLoad        = 1;
-  let mayStore       = 1;
+def FENCE : RVXInstI<0b0001111, 0b000,
+	(), (ins uimm12_fence:$fm),
+	"fence\t$fm", [], NoItin> {
+	let rd  = 0;
+	let rs1 = 0;
+	let hasSideEffects = 1;
+	let isBarrier      = 1;
+	let mayLoad        = 1;
+	let mayStore       = 1;
 }
-
