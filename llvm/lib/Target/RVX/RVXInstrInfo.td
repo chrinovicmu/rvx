@@ -135,3 +135,7 @@ def FENCE : RVXInstI<0b0001111, 0b000,
 	let mayLoad        = 1;
 	let mayStore       = 1;
 }
+
+def RVXAsmWriter : AsmWriter{
+    let AsmWriterClassName = "RVXInsrPrinter";     
+}
