@@ -61,7 +61,16 @@ public:
 
     void relaxInstruction(MCInst &Inst,
                         const MCSubtargetInfo &STI) const override;
-}
+    /*fills 'Count' bytes with NOP instruction in the output stream 'OS'
+    * called when assembler needs to insert alignment */ 
+    bool writeNopData(raw_ostream &OS, uint64_t Count, 
+                      Const MCSubtargetInfo *STI) const override; 
+
+    /*if fixup should be emitted as an elf relocation*/ 
+    bool shouldForceRelocation(const MCAssembler &Asm, const MCFixup &Fixup, 
+                               const MCValue &Target, 
+                               const MCSubtargetInfo *STI) override; 
+}; 
 }
 
 #endif 
