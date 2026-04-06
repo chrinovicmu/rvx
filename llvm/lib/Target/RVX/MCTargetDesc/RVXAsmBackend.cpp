@@ -318,4 +318,36 @@ bool RVXAsmBackend::fixupNeedsRelaxation(const MCFixup &Fixup,
   return false;
 }
 
+void RVXAsmBackend::relaxInstruction(MCInst &Inst,
+                                      const MCSubtargetInfo &STI) const {
+
+    report_fatal_error("RVXAsmBackend::relaxInstruction — relaxation not yet "
+                     "implemented for opcode " + Twine(Inst.getOpcode()) +
+                     ". Add a case to relaxInstruction() for each compressed "
+                     "instruction that needs a longer-form fallback.");
+}
+bool RVXAsmBackend::writeNopData(raw_ostream &OS, uint64_t Count, 
+                                 const MCSubtargetInfo *STI) const{
+
+    /*If count is not a multiplier of 4*/ 
+    if(Count % 4 != 0)
+        return false; 
+
+    for(uint64_t i = 0; i < Count; i +=4)
+        support::endian::write<uint32_t>(OS, 0x00000013, llvm::endianness::little); 
+
+    return true; 
+}
+
+MCAsmBackend *LLVM::createRVXAsmBackend(const Target &T, 
+                                        const MCSubTargetInfo &STI, 
+                                        const MCRegisterInfo *MRI, 
+                                        const MCTargetOptions &Option)
+{
+    const Triple &TT = STI.getTargetTriple(); 
+    uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(TT.getOS()); 
+    bool is Is64Bit = TT.isArch64Bit(); 
+    return new RVXAsmBackend(STI, OSABI, Is64Bit, Options); 
+}
+
 
